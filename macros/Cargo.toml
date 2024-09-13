@@ -1,5 +1,11 @@
 [package]
-name = "macros"
+name = "amalie-macros"
+description = "Macros for amalie"
+authors = ["GlacierSG <iamglaciersg@gmail.com>"]
+repository = "https://github.com/GlacierSG/amalie"
+readme = "README.md"
+keywords = ["amalie", "macros", "math","algebra"]
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
 

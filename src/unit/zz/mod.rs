@@ -10,7 +10,7 @@ mod zz;
 
 pub use zz::*;
 
-pub use macros::zz;
+pub use amalie_macros::zz;
 
 #[cfg(feature = "pyo3")]
 pub mod py;

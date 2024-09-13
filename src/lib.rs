@@ -1,7 +1,7 @@
 pub mod alg;
 pub mod unit;
 pub use unit::zz::*;
-pub use macros::{zz, vec_zz, matrix};
+pub use amalie_macros::{zz, vec_zz, matrix};
 
 mod error;
 pub use error::*;
