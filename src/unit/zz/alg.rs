@@ -2,7 +2,6 @@ use super::ZZ;
 use num::bigint::RandBigInt;
 use num::Integer;
 use crate::mod_inv;
-use crate::{Result, Error};
 use rand::thread_rng;
 
 impl ZZ {
@@ -38,40 +37,43 @@ impl ZZ {
         }
     }
 
-    pub fn pow(&self, exp: u32) -> Self {
+    pub fn pow(&self, exp: impl AsRef<ZZ>) -> Self {
+        let exp = exp.as_ref();
+
+        let exp: u32 = exp.try_into().expect("exponent is too large");
         ZZ { v: self.v.pow(exp) }
     }
 
-    pub fn mod_pow(&self, exp: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Result<Self> {
+    pub fn mod_pow(&self, exp: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Self {
         let exp = exp.as_ref();
         let m = m.as_ref();
 
         if m == 0 {
-            return Err(Error::InvalidInput("modulus is 0".to_string()));
+            panic!("Divide by zero");
         }
         if exp < 0 {
-            let v = mod_inv(&self, m)?;
-            Ok(ZZ {
-                v: (v.mod_pow(-exp, &m)?).v,
-            })
+            let v = mod_inv(&self, m).expect("Could not calculate modular inverse");
+            ZZ {
+                v: v.mod_pow(-exp, &m).v,
+            }
         }
         else {
-            Ok(ZZ {
+            ZZ {
                 v: self.v.modpow(&exp.v, &m.v),
-            })
+            }
         }
     }
 
-    pub fn nth_root(&self, n: impl AsRef<ZZ>) -> Result<ZZ> {
+    pub fn nth_root(&self, n: impl AsRef<ZZ>) -> Option<ZZ> {
         let n = n.as_ref();
         match (&n.v).try_into() {
             Ok(nth) => {
                 let r = self.v.nth_root(nth);
                 if r.pow(nth) == n.v {
-                    return Ok(ZZ{ v: r })
+                    return Some(ZZ { v: r })
                 }
                 else {
-                    return Err(Error::NoResult);
+                    return None;
                 }
             }
             _ => {
@@ -81,27 +83,27 @@ impl ZZ {
     }
 
 
-    pub fn root_floor(&self, n: impl AsRef<ZZ>) -> Result<ZZ> {
+    pub fn root_floor(&self, n: impl AsRef<ZZ>) -> ZZ {
         let n= n.as_ref();
         match (&n.v).try_into() {
             Ok(nth) => {
-                Ok(ZZ{v: self.v.nth_root(nth)})
+                ZZ{ v: self.v.nth_root(nth) }
             }
             _ => {
                 todo!("the root was too high");
             }
         }
     }
-    pub fn root_ceil(&self, nth: impl AsRef<ZZ>) -> Result<ZZ> {
+    pub fn root_ceil(&self, nth: impl AsRef<ZZ>) -> ZZ {
         let nth = nth.as_ref();
         match (&nth.v).try_into() {
             Ok(nth) => {
                 let r = self.v.nth_root(nth);
                 if r.pow(nth) < self.v {
-                    return Ok(ZZ{v: r+1});
+                    return ZZ{v: r+1};
                 }
                 else {
-                    return Ok(ZZ{v: r});
+                    return ZZ{v: r};
                 }
             }
             _ => {

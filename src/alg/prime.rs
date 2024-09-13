@@ -1,5 +1,4 @@
-use super::mod_pow;
-use crate::{zz, ZZ};
+use crate::{zz, ZZ, Result};
 
 /// Generated using the following sage code
 /// ```sage
@@ -16,16 +15,24 @@ pub fn is_prime(p: impl AsRef<ZZ>) -> bool {
         return false;
     } else if p == 2 {
         return true;
-    } else if p & 1 == 1 {
+    } else if p & 1 == 0 {
         return false;
-    } else if p < 16386 {
-        let mut p: usize = p.try_into().unwrap();
-        p >>= 1;
-        let idx = p>>3;
-        return (LOW_PRIMES[idx]>>(p&7)) & 1 == 1;
+    } 
+
+    let t: Result<u64> = p.try_into();
+    match t {
+        Ok(p) => {
+            if p < 16385 {
+                let mut p: usize = p.try_into().unwrap();
+                p >>= 1;
+                let idx = p>>3;
+                return (LOW_PRIMES[idx]>>(p&7)) & 1 == 1;
+            }
+            return primal::is_prime(p);
+        },
+        Err(_) => {}
     }
-    // TODO: optomize
-    miller_rabin(p, 1000)
+    miller_rabin(p, 100)
 }
 
 pub fn miller_rabin(n: impl AsRef<ZZ>, k: usize) -> bool {
@@ -46,7 +53,7 @@ pub fn miller_rabin(n: impl AsRef<ZZ>, k: usize) -> bool {
     for _ in 0..k {
         let a = ZZ::rand_range(&zz!(2), n - 4);
 
-        let mut x = mod_pow(a, &d, n).unwrap();
+        let mut x = a.mod_pow(&d, n);
         if x == 1 || x == n - 1 {
             continue;
         }
@@ -73,7 +80,7 @@ pub fn miller_rabin(n: impl AsRef<ZZ>, k: usize) -> bool {
 
 #[cfg(test)]
 mod test {
-    use super::{miller_rabin, ZZ};
+    use super::{miller_rabin, ZZ, is_prime, zz};
 
     #[test]
     fn test_miller_rabin() {
@@ -92,5 +99,12 @@ mod test {
         for p in non_primes {
             assert_eq!(miller_rabin(ZZ::from(p), 4), false);
         }
+    }
+    #[test] 
+    fn test_large() {
+
+        let p = zz!(8046047750471549884742864261737478411129806839855555228638804849413140951997507220381046990534016609);
+        assert_eq!(is_prime(&p), true);
+        assert_eq!(is_prime(p+2), false);
     }
 }

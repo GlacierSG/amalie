@@ -1,5 +1,4 @@
-use crate::{ZZ, Error, Result};
-use std::ops::{Mul, MulAssign};
+use crate::{zz, ZZ, Error, Result};
 use std::sync::Arc;
 
 /// Montgomery curve
@@ -72,8 +71,8 @@ impl Point {
     pub fn double(self) -> Point {
         match self {
             Point::Val{x, y, curve} => {
-                let u = (&x + &y).pow(2);
-                let v = (x - y).pow(2);
+                let u = (&x + &y).pow(&zz!(2));
+                let v = (x - y).pow(&zz!(2));
                 let diff = &u - &v;
                 let new_x = (&u * &v) % &curve.n;
                 let tmp = (&curve.a+2) >> 2;

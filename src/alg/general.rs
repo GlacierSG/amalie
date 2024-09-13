@@ -1,8 +1,8 @@
-use crate::{Error, Result, ZZ, zz};
+use crate::{ZZ, zz};
 use std::collections::HashMap;
 
 
-pub fn smod(a: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> ZZ {
+fn smod(a: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> ZZ {
     let a = a.as_ref();
     let m = m.as_ref();
 
@@ -22,13 +22,11 @@ pub fn egcd(a: impl AsRef<ZZ>, b: impl AsRef<ZZ>) -> (ZZ, ZZ, ZZ) {
     a.egcd(b)
 }
 
-pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> Result<(ZZ, ZZ)> {
+pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> (ZZ, ZZ) {
     let v = v.as_ref();
     let m = m.as_ref();
 
-    if v.len() != m.len() {
-        return Err(Error::InvalidInput("v.len() != m.len()".to_string()));
-    }
+    assert_eq!(v.len(), m.len(), "v.len() != m.len()");
 
     let mut n = zz!(1);
     let mut x = zz!(0);
@@ -38,30 +36,18 @@ pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> Result<(ZZ, ZZ)> {
         let (_, _, y) = egcd(&m[i], &l);
         x += &v[i] * &y * &l;
     }
-    Ok((smod(&x, &n), n))
+    (smod(&x, &n), n)
 }
 
-pub fn mod_inv(g: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Result<ZZ> {
+pub fn mod_inv(g: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Option<ZZ> {
     let m = m.as_ref();
 
     let (d, x, _) = egcd(g, m);
     if d == 1 {
-        Ok(smod(&x, m))
+        Some(smod(&x, m))
     } else {
-        Err(Error::NoResult)
+        None
     }
-}
-
-pub fn pow(g: impl AsRef<ZZ>, exp: u32) -> Result<ZZ> {
-    let g = g.as_ref();
-    Ok(g.pow(exp))
-}
-
-pub fn mod_pow(g: impl AsRef<ZZ>, exp: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Result<ZZ> {
-    let g = g.as_ref();
-    let m = m.as_ref();
-
-    Ok(g.mod_pow(exp, m)?)
 }
 
 pub fn totient(primes: impl AsRef<[ZZ]>) -> ZZ {
@@ -76,14 +62,16 @@ pub fn totient(primes: impl AsRef<[ZZ]>) -> ZZ {
 
     let mut out = zz!(1); 
     for (prime, count) in map.iter() {
-        out *= prime.pow(*count-1);
+        out *= prime.pow(*count-zz!(1));
         out *= *prime - 1;
     }
     out
 }
 
 pub fn continued_fraction(x: impl AsRef<ZZ>, y: impl AsRef<ZZ>) -> Vec<(ZZ, ZZ)> {
-    let (mut x, mut y) = (x.as_ref().clone(), y.as_ref().clone());
+    let mut x = x.as_ref().clone();
+    let mut y = y.as_ref().clone();
+
     let mut a = &x/&y;
     let mut out = vec![(a.clone(), zz!(1))];
 
@@ -117,16 +105,6 @@ mod test {
     use super::*;
 
     #[test]
-    fn test_mod_pow() {
-        let (g, e, m) = (zz!(3), zz!(1000), zz!(1321241));
-        assert_eq!(mod_pow(&g, &e, &m).unwrap(), zz!(587781));
-
-
-        let (g, e, m) = (zz!(3), zz!(-1000), zz!(1321241));
-        assert_eq!(mod_pow(&g, &e, &m).unwrap(), zz!(5478));
-    }
-
-    #[test]
     fn test_mod_inv() {
         let (g, m) = (zz!(123), zz!(937));
         assert_eq!(mod_inv(g, m).unwrap(), zz!(678));
@@ -143,7 +121,7 @@ mod test {
         let sol = (zz!(11729333136918336599556614225262019449383649885811789858959155083082618000073636325423824), 
 			         zz!(29351071308657422647975598374376392562718985574346423618982742115523312472944466642614081));
 
-        assert_eq!(crt(&v, &m).unwrap(), sol);
+        assert_eq!(crt(&v, &m), sol);
     }
 
     #[test]

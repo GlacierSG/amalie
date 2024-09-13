@@ -38,13 +38,21 @@ impl FromStr for ZZ {
     }
 }
 
-impl TryFrom<&ZZ> for usize {
-    type Error = Error;
+macro_rules! impl_try_from {
+    ($($type:ident),*) => {
+        $(
+            impl TryFrom<&ZZ> for $type {
+                type Error = Error;
 
-    fn try_from(value: &ZZ) -> Result<Self> {
-        match (&value.v).try_into() {
-            Ok(v) => Ok(v),
-            Err(_) => Err(Error::CouldNotConvert),
-        }
+                fn try_from(value: &ZZ) -> Result<Self> {
+                    match (&value.v).try_into() {
+                        Ok(v) => Ok(v),
+                        Err(_) => Err(Error::CouldNotConvert),
+                    }
+                }
+            }
+        )*
     }
 }
+
+impl_try_from!(isize, i8, i16, i32, i64, i128, usize, u8, u16, u32, u64, u128);
