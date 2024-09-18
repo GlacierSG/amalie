@@ -33,8 +33,8 @@ pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> (ZZ, ZZ) {
     for i in 0..v.len() { n *= &m[i]; }
     for i in 0..v.len() {
         let l = &n/&m[i];
-        let (_, tx, _) = egcd(&m[i], &l);
-        x += &v[i] * &tx * &l;
+        let (_, _, ty) = egcd(&m[i], &l);
+        x += &v[i] * &ty * &l;
     }
     (smod(&x, &n), n)
 }
@@ -42,9 +42,9 @@ pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> (ZZ, ZZ) {
 pub fn mod_inv(g: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Option<ZZ> {
     let m = m.as_ref();
 
-    let (d, _, y) = egcd(g, m);
+    let (d, x, _) = egcd(g, m);
     if d == 1 {
-        Some(smod(&y, m))
+        Some(smod(&x, m))
     } else {
         None
     }
