@@ -174,4 +174,11 @@ impl ZZ {
     fn __int__(&self) -> BigInt {
         self.v.clone().into()
     }
+
+
+    fn mod_pow(&self, e: Bound<'_, PyAny>, m: Bound<'_, PyAny>) -> ZZ {
+        let e = pyany_to_zz(&e).expect("Wrong type for ZZ compare");
+        let m = pyany_to_zz(&m).expect("Wrong type for ZZ compare");
+        ZZ { v: self.v.mod_pow(e, m) }
+    }
 }

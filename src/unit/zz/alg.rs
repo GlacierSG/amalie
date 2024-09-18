@@ -28,7 +28,7 @@ impl ZZ {
 
     pub fn egcd(&self, other: &Self) -> (ZZ, ZZ, ZZ) {
         let t = self.v.extended_gcd(&other.v);
-        (ZZ { v: t.gcd }, ZZ { v: t.x }, ZZ { v: t.y })
+        (ZZ { v: t.gcd }, ZZ { v: t.y }, ZZ { v: t.x })
     }
 
     pub fn lcm(&self, other: &Self) -> ZZ {

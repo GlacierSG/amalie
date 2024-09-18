@@ -58,7 +58,7 @@ fn crt(v: Vec<Bound<'_, PyAny>>, m: Vec<Bound<'_, PyAny>>) -> PyResult<(ZZ, ZZ)>
 fn mod_inv(g: Bound<'_, PyAny>, exp: Bound<'_, PyAny>) -> PyResult<ZZ> {
     let g = pyany_to_zz(&g)?;
     let exp = pyany_to_zz(&exp)?;
-    Ok(ZZ{v: crate::mod_inv(g, exp).unwrap()})
+    Ok(ZZ{v: crate::mod_inv(g, exp).expect("Could not compute the modular inverse")})
 }
 #[pyfunction]
 fn totient(factors: Vec<Bound<'_, PyAny>>) -> PyResult<ZZ> {

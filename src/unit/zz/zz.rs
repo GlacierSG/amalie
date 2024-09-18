@@ -51,6 +51,9 @@ impl ZZ {
     pub fn from_bytes_be(bytes: &[u8]) -> ZZ {
         ZZ { v: BigInt::from_bytes_be(Plus, bytes) }
     }
+    pub fn from_bytes_le(bytes: &[u8]) -> ZZ {
+        ZZ { v: BigInt::from_bytes_le(Plus, bytes) }
+    }
 
     pub fn bits(&self) -> u64 {
         self.v.bits()
