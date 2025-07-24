@@ -71,7 +71,7 @@ fn is_prime(n: Bound<'_, PyAny>) -> PyResult<bool> {
     Ok(crate::is_prime(n))
 }
 #[pyfunction]
-fn pollard_rho(n: Bound<'_, PyAny>) -> PyResult<ZZ> {
+fn factor(n: Bound<'_, PyAny>) -> PyResult<ZZ> {
     let n = pyany_to_zz(&n)?;
-    Ok(ZZ{ v: crate::pollard_rho(n)? })
+    Ok(ZZ{ v: crate::factor(n)? })
 }
