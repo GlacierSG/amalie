@@ -42,8 +42,7 @@ pub fn factor(n: ZZ) -> Result<Vec<ZZ>> {
         return Err(Error::InvalidInput("n < 2".to_string()));
     }
 
-    // Pollard rho may fail to factor even numbers
-    while composite.clone() & 1 == 0 {
+    while &composite & 1 == 0 {
         factors.push(zz!(2));
         composite >>= 1;
     }
@@ -57,7 +56,6 @@ pub fn factor(n: ZZ) -> Result<Vec<ZZ>> {
         return Ok(factors);
     }
 
-    println!("factoring {:?}", composite.clone());
 
     let mut divisor_queue = vec![composite];
     while let Some(mut val) = divisor_queue.pop() {
@@ -65,13 +63,13 @@ pub fn factor(n: ZZ) -> Result<Vec<ZZ>> {
         // Since factoring perfect powers only takes O((lg^3 n) lg lg lg n) iirc, while Pollard Rho
         // takes O(n^(1/4)), make sure to factor perfect powers first.
         let d = pollard_rho(&val)?;
-        val /= d.clone();
-        if is_prime(val.clone()) {
+        val /= &d;
+        if is_prime(&val) {
             factors.push(val);
         } else {
             divisor_queue.push(val);
         }
-        if is_prime(d.clone()) {
+        if is_prime(&d) {
             factors.push(d);
         } else {
             divisor_queue.push(d);
