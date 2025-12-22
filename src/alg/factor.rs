@@ -30,6 +30,9 @@ fn pollard_rho(n: impl AsRef<ZZ>) -> Result<ZZ> {
 }
 
 pub fn factor(n: ZZ) -> Result<Vec<ZZ>> {
+    if n == 1 { return Ok(vec![zz!(1)]); }
+    if n == 0 { return Ok(vec![]); }
+
     let mut factors = Vec::new();
     let mut composite = n.clone();
 

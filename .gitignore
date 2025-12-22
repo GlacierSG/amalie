@@ -1,2 +1,5 @@
-target/
-venv/
+debug
+target
+venv
+
+**/*.rs.bk
