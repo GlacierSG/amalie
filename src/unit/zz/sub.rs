@@ -64,6 +64,6 @@ mod test {
 
         let x = zz!(123);
         assert_eq!(-&x, -zz!(123));
-        assert_eq!(--x, zz!(123));
+        assert_eq!(-(-x), zz!(123));
     }
 }

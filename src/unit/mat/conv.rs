@@ -1,4 +1,4 @@
-use super::mat::Matrix;
+use super::Matrix;
 use crate::unit::zz::ZZ;
 
 impl From<&Vec<Vec<ZZ>>> for Matrix {
@@ -12,11 +12,7 @@ impl From<&Vec<Vec<ZZ>>> for Matrix {
                 values.push(u.clone());
             }
         }
-        Matrix {
-            v: values,
-            rows: item[0].len(),
-            cols: item.len(),
-        }
+        Matrix::new(values, item[0].len(), item.len())
     }
 }
 impl From<Vec<Vec<ZZ>>> for Matrix {
@@ -30,10 +26,6 @@ impl From<Vec<Vec<ZZ>>> for Matrix {
                 values.push(u.clone());
             }
         }
-        Matrix {
-            v: values,
-            rows: item[0].len(),
-            cols: item.len(),
-        }
+        Matrix::new(values, item[0].len(), item.len())
     }
 }

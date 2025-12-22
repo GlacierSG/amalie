@@ -123,3 +123,4 @@ impl ZZ {
         v.pow(2) == self.v
     }
 }
+

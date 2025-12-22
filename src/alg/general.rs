@@ -1,6 +1,15 @@
 use crate::{ZZ, zz};
 use std::collections::HashMap;
 
+pub fn min(a: impl AsRef<ZZ>, b: impl AsRef<ZZ>) -> ZZ {
+    let (a,b) = (a.as_ref(), b.as_ref());
+    return if a < b { a.clone() } else { b.clone() }
+}
+
+pub fn max(a: impl AsRef<ZZ>, b: impl AsRef<ZZ>) -> ZZ {
+    let (a,b) = (a.as_ref(), b.as_ref());
+    return if a > b { a.clone() } else { b.clone() }
+}
 
 fn smod(a: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> ZZ {
     let a = a.as_ref();
@@ -38,6 +47,7 @@ pub fn crt(v: impl AsRef<Vec<ZZ>>, m: impl AsRef<Vec<ZZ>>) -> (ZZ, ZZ) {
     }
     (smod(&x, &n), n)
 }
+
 
 pub fn mod_inv(g: impl AsRef<ZZ>, m: impl AsRef<ZZ>) -> Option<ZZ> {
     let m = m.as_ref();

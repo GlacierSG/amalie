@@ -1,1 +1,2 @@
-mod vec;
+mod vector;
+pub use vector::*;

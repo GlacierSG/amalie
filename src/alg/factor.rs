@@ -1,10 +1,11 @@
 use crate::{Error, Result, zz, ZZ, alg::gcd};
 
-fn g(mut x: ZZ) -> ZZ {
+fn g(mut x: ZZ, n: &ZZ) -> ZZ {
     x <<= 1;
     x += 1;
-    x
+    x % n 
 }
+
 pub fn pollard_rho(n: impl AsRef<ZZ>) -> Result<ZZ> {
     let n = n.as_ref();
     if n < 2 {
@@ -15,9 +16,9 @@ pub fn pollard_rho(n: impl AsRef<ZZ>) -> Result<ZZ> {
     let mut y = x.clone();
     let mut d = zz!(1);
     while &d == 1 {
-        x = g(x);
-        y = g(g(y));
-        d = gcd((&x-&y).abs(), n)
+        x = g(x, &n);
+        y = g(g(y, &n), &n);
+        d = gcd((&x-&y).to_abs(), n)
     }
     if &d == n {
         return Err(Error::NoResult);
@@ -38,5 +39,6 @@ mod test {
         assert_eq!(pollard_rho(zz!(1)).is_err(), true);
         assert_eq!(pollard_rho(zz!(2)).is_err(), true);
         assert_eq!(pollard_rho(zz!(6131066257801)).unwrap(), 19);
+        assert_eq!(pollard_rho(zz!(1048583) * zz!(4194319)).unwrap(), 1048583);
     }
 }

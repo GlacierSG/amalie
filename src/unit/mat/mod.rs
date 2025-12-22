@@ -1,6 +1,6 @@
-mod mat;
+mod matrix;
 mod conv;
 mod comp;
 mod alg;
 
-pub use mat::*;
+pub use matrix::*;

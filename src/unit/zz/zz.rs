@@ -21,12 +21,18 @@ impl ZZ {
 }
 
 impl ZZ {
-    pub fn abs(mut self) -> Self {
+    pub fn to_abs(mut self) -> Self {
         if self.v.is_negative() {
             self *= -1;
             return self;
         }
         self
+    }
+    pub fn abs(&self) -> Self {
+        if self.v.is_negative() {
+            return -self.clone();
+        }
+        return self.clone();
     }
 
     pub fn neg(self) -> Self {
