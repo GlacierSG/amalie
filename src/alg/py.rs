@@ -11,6 +11,7 @@ pub fn py_alg(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(mod_inv, m)?)?;
     m.add_function(wrap_pyfunction!(totient, m)?)?;
     m.add_function(wrap_pyfunction!(is_prime, m)?)?;
+    m.add_function(wrap_pyfunction!(factor, m)?)?;
     Ok(())
 }
 
@@ -71,7 +72,11 @@ fn is_prime(n: Bound<'_, PyAny>) -> PyResult<bool> {
     Ok(crate::is_prime(n))
 }
 #[pyfunction]
-fn factor(n: Bound<'_, PyAny>) -> PyResult<ZZ> {
+fn factor(n: Bound<'_, PyAny>) -> PyResult<Vec<ZZ>> {
     let n = pyany_to_zz(&n)?;
-    Ok(ZZ{ v: crate::factor(n)? })
+    let mut out = vec![];
+    for factor in crate::factor(n)? {
+        out.push(ZZ{ v: factor });
+    }
+    Ok(out)
 }
